@@ -8,13 +8,14 @@ defmodule Lambda do
 
   ## Examples
 
-      iex> Lambda.hello()
-      :world
+      #iex> Lambda.hello()
+      #:world
 
   """
 
     def repl() do
       try do
+          #:io.write(read())
           print(reduce(read()))
           repl()
       catch
@@ -38,19 +39,34 @@ defmodule Lambda do
       {body,ls1} = parse1(ls,[])
       parse(ls1,res++[{:^,arg1,body}])
     end
-    def parse([94|_],_) do
-      throw("syntax error")
+    def parse([94,arg|ls],_) do
+      arg1 = String.to_atom(<<arg>>)
+      [{:^,arg1,hd(parse([94|ls],[]))}]
     end
     # ( )
     def parse([40|ls],res) do
       {exp,ls1} = parse1(ls,[])
-      parse(ls1,res++[exp])
+      if is_lambda(exp) do
+        parse(ls1,res++[exp])
+      else
+        parse(ls1,res++exp)
+      end
     end
     def parse([41|ls],res) do
       parse(ls,res)
     end
-    def parse([l|ls],res) do
-      parse(ls,res++[String.to_atom(<<l>>)])
+    def parse([l1,l2|ls],res) when l2 < 48 do
+      if is_lambda(hd(res)) do
+        parse(l2++ls,[res]++[String.to_atom(<<l1>>)])
+      else
+        parse([l2]++ls,[res]++[String.to_atom(<<l1>>)])
+      end
+    end
+    def parse([l1,l2|ls],[]) do
+      parse(ls,[String.to_atom(<<l1>>),String.to_atom(<<l2>>)])
+    end
+    def parse([l1,l2|ls],res) do
+      parse([l2]++ls,[res]++[String.to_atom(<<l1>>)])
     end
 
     def parse1([94,arg,46|ls],res) do
@@ -58,15 +74,21 @@ defmodule Lambda do
       {body,ls1} = parse1(ls,res)
       {{:^,arg1,body},ls1}
     end
-    def parse1([94|_],_) do
-      throw("syntax error")
+    def parse1([94,arg|ls],res) do
+      arg1 = String.to_atom(<<arg>>)
+      {body,ls1} = parse1([94|ls],res)
+      {{:^,arg1,body},ls1}
     end
     def parse1([40|ls],_) do
       {exp,[41|ls1]} = parse1(ls,[])
       {exp,ls1}
     end
-    def parse1([l|ls],_) do
-      {String.to_atom(<<l>>),ls}
+    # x )
+    def parse1([l1,l2|ls],_) when l2 < 48 do
+      {String.to_atom(<<l1>>),[l2]++ls}
+    end
+    def parse1([l1,l2|ls],_) do
+      {[String.to_atom(<<l1>>),String.to_atom(<<l2>>)],ls}
     end
 
     def print([]) do end
@@ -76,9 +98,9 @@ defmodule Lambda do
       IO.write(".")
       print1(y)
     end
-    def print([{:^,x,y},z]) do
-      print1({:^,x,y})
-      print1(z)
+    def print([x,y]) do
+      print1(x)
+      print(y)
     end
     def print([x]) do
       IO.write(x)
@@ -95,12 +117,19 @@ defmodule Lambda do
       IO.write(e)
     end
 
+    def is_lambda({:^,_,_}) do true end
+    def is_lambda(_) do false end
+
     def reduce(:end) do
       throw "end"
     end
     def reduce([x]) do [x] end
     def reduce([x,y]) do
-      beta(x,y)
+      if is_lambda(x) do
+        beta(x,y)
+      else
+        [x,y]
+      end
     end
 
     def beta({:^,arg,body},y) do
