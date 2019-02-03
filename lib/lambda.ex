@@ -57,7 +57,7 @@ defmodule Lambda do
     end
     def parse([l1,l2|ls],res) when l2 < 48 do
       if is_lambda(hd(res)) do
-        parse(l2++ls,[res]++[String.to_atom(<<l1>>)])
+        parse([l2]++ls,res++[String.to_atom(<<l1>>)])
       else
         parse([l2]++ls,[res]++[String.to_atom(<<l1>>)])
       end
