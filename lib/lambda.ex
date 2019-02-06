@@ -100,20 +100,26 @@ defmodule Lambda do
     end
     def print([x,y]) do
       print1(x)
-      print(y)
+      print([y])
     end
     def print([x]) do
       IO.write(x)
     end
 
     def print1({:^,x,y}) do
+      #IO.inspect binding()
       IO.write("(^")
       IO.write(x)
       IO.write(".")
       print1(y)
       IO.write(")")
     end
+    def print1([l|ls]) do
+      print1(l)
+      print(ls)
+    end
     def print1(e) do
+      #IO.inspect binding()
       IO.write(e)
     end
 
@@ -136,8 +142,13 @@ defmodule Lambda do
       [replace(arg,body,y)]
     end
 
-    def replace(x,x,z) do
-      z
+    def replace(x,x,z) when is_atom(x) do z end
+    def replace(_,y,z) when is_atom(y) do z end
+    def replace(x,{:^,a,y},z) do
+      {:^,a,replace(x,y,z)}
+    end
+    def replace(x,[y|ys],z) do
+      [y] ++ replace(x,ys,z)
     end
 
 end
