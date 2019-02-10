@@ -1,18 +1,18 @@
 チャーチのラムダ算法による簡約化をするインタプリタです。
 Elixirの習得のために書いています。
 
+使い方
+起動　iex -S mix
+     Lambda.repl
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `lambda` to your list of dependencies in `mix.exs`:
+λは　＾記号で代用します。例　λx.x -> ^x.x
+一番外側のλ式はカッコを省略できます。
 
-```elixir
-def deps do
-  [
-    {:lambda, "~> 0.1.0"}
-  ]
-end
-```
+変数は小文字のアルファベットa-zです。
+大文字のISKYはコンビネータのために予約されています。
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/lambda](https://hexdocs.pm/lambda).
+終了　endと入れるとreplを抜けます。
+
+
+参考文献
+計算論　計算可能性とラムダ計算　高橋正子　著　近代科学社

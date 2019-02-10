@@ -45,49 +45,67 @@ defmodule Lambda do
     end
     # ( )
     def parse([40|ls],res) do
+      #IO.inspect binding()
       {exp,ls1} = parse1(ls,[])
-      if is_lambda(exp) do
-        parse(ls1,res++[exp])
-      else
-        parse(ls1,res++exp)
+      cond do
+        is_lambda(exp) -> parse(ls1,res++[exp])
+        res == [] -> parse(ls1,exp)
+        true -> parse(ls1,res++[exp])
       end
     end
     def parse([41|ls],res) do
+      #IO.inspect binding()
       parse(ls,res)
     end
+    def parse([l1,40|ls],[]) do
+      #IO.inspect binding()
+      parse([40]++ls,[String.to_atom(<<l1>>)])
+    end
+    def parse([l1,40|ls],res) do
+      #IO.inspect binding()
+      parse([40]++ls,[res]++[String.to_atom(<<l1>>)])
+    end
     def parse([l1,l2|ls],res) when l2 < 48 do
-      if is_lambda(hd(res)) do
+      #IO.inspect binding()
+      if res != [] and is_lambda(hd(res)) do
         parse([l2]++ls,res++[String.to_atom(<<l1>>)])
       else
         parse([l2]++ls,[res]++[String.to_atom(<<l1>>)])
       end
     end
     def parse([l1,l2|ls],[]) do
+      #IO.inspect binding()
       parse(ls,[String.to_atom(<<l1>>),String.to_atom(<<l2>>)])
     end
     def parse([l1,l2|ls],res) do
+      #IO.inspect binding()
       parse([l2]++ls,[res]++[String.to_atom(<<l1>>)])
     end
 
     def parse1([94,arg,46|ls],res) do
+      #IO.inspect binding()
       arg1 = String.to_atom(<<arg>>)
       {body,ls1} = parse1(ls,res)
       {{:^,arg1,body},ls1}
     end
     def parse1([94,arg|ls],res) do
+      #IO.inspect binding()
       arg1 = String.to_atom(<<arg>>)
       {body,ls1} = parse1([94|ls],res)
       {{:^,arg1,body},ls1}
     end
     def parse1([40|ls],_) do
+      #IO.inspect binding()
       {exp,[41|ls1]} = parse1(ls,[])
       {exp,ls1}
     end
     # x )
     def parse1([l1,l2|ls],_) when l2 < 48 do
+      #IO.inspect binding()
       {String.to_atom(<<l1>>),[l2]++ls}
     end
     def parse1([l1,l2|ls],_) do
+      #IO.inspect binding()
       {[String.to_atom(<<l1>>),String.to_atom(<<l2>>)],ls}
     end
 
@@ -99,12 +117,19 @@ defmodule Lambda do
       print1(y)
     end
     def print([x,y]) do
+      #IO.inspect binding()
       print1(x)
       print([y])
     end
+    def print([x]) when is_list(x) do
+      #IO.inspect binding()
+      print(x)
+    end
     def print([x]) do
+      #IO.inspect binding()
       IO.write(x)
     end
+
 
     def print1({:^,x,y}) do
       #IO.inspect binding()
@@ -130,7 +155,12 @@ defmodule Lambda do
       throw "end"
     end
     def reduce([x]) do [x] end
+    #IO.inspect binding()
+    def reduce([:I,y]) do
+      reduce([{:^,:x,:x},y])
+    end
     def reduce([x,y]) do
+    #IO.inspect binding()
       if is_lambda(x) do
         beta(x,y)
       else
@@ -139,6 +169,7 @@ defmodule Lambda do
     end
 
     def beta({:^,arg,body},y) do
+    #IO.inspect binding()
       [replace(arg,body,y)]
     end
 

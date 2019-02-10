@@ -19,5 +19,6 @@ defmodule LambdaTest do
     assert Lambda.parse('(^xy.x)\n',[]) == [{:^,:x,{:^,:y,:x}}]
     assert Lambda.parse('(^xyz.x)\n',[]) == [{:^ ,:x,{:^,:y,{:^,:z,:x}}}]
     assert Lambda.parse('(xy)z\n',[]) == [[:x,:y],:z]
+    assert Lambda.parse('x(yz)\n',[]) == [:x,[:y,:z]]
   end
 end
