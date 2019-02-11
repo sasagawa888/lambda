@@ -15,7 +15,7 @@ defmodule Lambda do
 
     def repl() do
       try do
-          #:io.write(combinator(read()))
+          #:io.write(reduce(combinator(read())))
           print(reduce(combinator(read())))
           repl()
       catch
@@ -191,14 +191,26 @@ defmodule Lambda do
       if is_list(exp) and length(exp) == 1 and is_lambda(hd(exp)) do
         hd(exp)
       else
-        {:^,a,replace(x,y,z)}
+        {:^,a,exp}
       end
     end
     def replace(_,[],_) do [] end
     def replace(x,[x|ys],z) do
       [z] ++ replace(x,ys,z)
     end
-    def replace(x,[y|ys],z) do
+    def replace(x,[y|ys],z) when is_atom(y) do
       [y] ++ replace(x,ys,z)
+    end
+    def replace(x,[y|ys],z) do
+      #IO.inspect binding()
+      if(is_lambda(y)) do
+        [replace1(x,y,z)] ++ replace(x,ys,z)
+      else
+        [replace(x,y,z)] ++ replace(x,ys,z)
+      end
+    end
+
+    def replace1(x,{:^,a,y},z) do
+      {:^,a,replace(x,y,z)}
     end
 end
