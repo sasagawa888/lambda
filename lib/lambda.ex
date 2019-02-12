@@ -62,6 +62,10 @@ defmodule Lambda do
         true -> parse(ls1,res++[exp])
       end
     end
+    #space skip
+    def parse([32|ls],res) do
+      parse(ls,res)
+    end
     def parse(_,_) do
       #IO.inspect binding()
       throw "syntax error"
@@ -123,12 +127,7 @@ defmodule Lambda do
       print1(x)
       print1(xs)
     end
-    def print([x]) do
-      #IO.inspect binding()
-      IO.write(x)
-    end
-
-
+    
     def print1({:^,x,y}) do
       #IO.inspect binding()
       IO.write("(^")
