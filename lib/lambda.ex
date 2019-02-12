@@ -116,6 +116,9 @@ defmodule Lambda do
 
 
     def print([]) do end
+    def print(x) when is_atom(x) do
+      IO.write(x)
+    end
     def print([{:^,x,y}]) do
       IO.write("^")
       IO.write(x)
@@ -124,10 +127,10 @@ defmodule Lambda do
     end
     def print([x|xs]) do
       #IO.inspect binding()
-      print1(x)
-      print1(xs)
+      print(x)
+      print(xs)
     end
-    
+
     def print1({:^,x,y}) do
       #IO.inspect binding()
       IO.write("(^")
