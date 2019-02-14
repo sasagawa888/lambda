@@ -15,7 +15,8 @@ defmodule Lambda do
 
     def repl() do
       try do
-          #:io.write(reduce(combinator(read())))
+          #:io.write(read())
+          #print(read())
           print(beta(combinator(read())))
           repl()
       catch
@@ -59,7 +60,7 @@ defmodule Lambda do
       cond do
         is_lambda(exp) -> parse(ls1,res++[exp])
         res == [] -> parse(ls1,exp)
-        true -> parse(ls1,res++[exp])
+        true -> parse(ls1,[res]++[exp])
       end
     end
     #space skip
@@ -115,6 +116,9 @@ defmodule Lambda do
     end
 
 
+    def print(x) when is_list(x) and length(x) >=2 do
+      print1(x)
+    end
     def print([]) do end
     def print(x) when is_atom(x) do
       IO.write(x)
@@ -166,7 +170,7 @@ defmodule Lambda do
 
     def combinator(:I) do {:^,:x,[:x]} end
     def combinator(:K) do {:^,:x,[{:^,:y,[:x]}]} end
-    def combinator(:S) do {:^,:x,[{:^,:y,[{:^,:z,[:x,[:z,[:y,:z]]]}]}]} end
+    def combinator(:S) do {:^,:x,[{:^,:y,[{:^,:z,[[:x,:z],[:y,:z]]}]}]} end
     def combinator([x,y]) do
       [combinator(x)]++[combinator(y)]
     end
@@ -177,9 +181,13 @@ defmodule Lambda do
     def beta([x]) when is_list(x) do [x] end
     def beta([x,y]) when is_atom(x) do [x,y] end
     def beta([{:^,a,body}]) do
-      [{:^,a,beta(body)}]
+      exp = beta(body)
+      :io.write(:asdf)
+      :io.write(exp)
+      [{:^,a,exp}]
     end
     def beta([x,y]) do
+      #:io.write([x,y])
       print([x,y])
       IO.write('\n')
       if is_lambda(x) do
@@ -196,7 +204,8 @@ defmodule Lambda do
 
     def beta1({:^,arg,body},y) do
     #IO.inspect binding()
-      replace(arg,body,y) |> beta
+      exp = beta(replace(arg,body,y))
+      exp
     end
 
     def replace(_,[],_) do [] end
