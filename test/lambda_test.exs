@@ -2,6 +2,13 @@ defmodule LambdaTest do
   use ExUnit.Case
   doctest Lambda
 
+  test "total test" do
+    assert Lambda.test('y\n') == :y
+    assert Lambda.test('Iy\n') == :y
+    assert Lambda.test('Is\n') == :s
+    assert Lambda.test('Ks\n') == {:y,:s}
+  end
+
   test "reduce test" do
     assert Lambda.reduce(:y) == :y
     assert Lambda.reduce([:x, :y]) == [:x,:y]

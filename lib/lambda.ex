@@ -31,6 +31,10 @@ defmodule Lambda do
       IO.gets("\n>") |> String.to_charlist |> parse([])
     end
 
+    # for test
+    def test(x) do
+      reduce(combinator(parse(x,[])))
+    end
 
     # terminal
     def parse('\n',res) do res end
@@ -148,10 +152,6 @@ defmodule Lambda do
     def is_lambda({_,_}) do true end
     def is_lambda(_) do false end
 
-    def is_single(x) when is_atom(x) do true end
-    def is_single({_,_}) do true end
-    def is_single(_) do false end
-
     def combinator(:I) do {:x, :x} end
     def combinator(:K) do {:x,{:y,:x}} end
     def combinator(:S) do {:x,{:y,{:z,[[:x,:z],[:y,:z]]}}} end
@@ -184,8 +184,10 @@ defmodule Lambda do
       [y] ++ replace(x,ys,z)
     end
     def replace(_,[y,ys],_) do
-      #IO.inspect binding()
       reduce([y,ys])
+    end
+    def replace(x,{arg,body},z) do
+      {arg,replace(x,body,z)}
     end
     def replace(_,y,_) do y end
 
