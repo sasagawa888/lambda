@@ -167,23 +167,22 @@ defmodule Lambda do
     def is_single({_,_}) do true end
     def is_single(_) do false end
 
-    def combinator(:I) do {:^,:x,[:x]} end
-    def combinator(:K) do {:^,:x,[{:^,:y,[:x]}]} end
-    def combinator(:S) do {:^,:x,[{:^,:y,[{:^,:z,[[:x,:z],[:y,:z]]}]}]} end
+    def combinator(:I) do {:x, :x} end
+    def combinator(:K) do {:x,{:y,:x}} end
+    def combinator(:S) do {:x,{:y,{:z,[[:x,:z],[:y,:z]]}}} end
     def combinator([x,y]) do
       [combinator(x)]++[combinator(y)]
     end
     def combinator(x) do x end
 
     def beta(:end) do throw "end" end
-    def beta([x]) when is_atom(x) do [x] end
-    def beta([x]) when is_list(x) do [x] end
+    def beta(x) when is_atom(x) do x end
     def beta([x,y]) when is_atom(x) do [x,y] end
-    def beta([{:^,a,body}]) do
+    def beta({a,body}) do
       exp = beta(body)
       :io.write(:asdf)
       :io.write(exp)
-      [{:^,a,exp}]
+      {a,exp}
     end
     def beta([x,y]) do
       #:io.write([x,y])
@@ -201,7 +200,7 @@ defmodule Lambda do
       end
     end
 
-    def beta1({:^,arg,body},y) do
+    def beta1({arg,body},y) do
     #IO.inspect binding()
       exp = beta(replace(arg,body,y))
       exp
@@ -224,6 +223,6 @@ defmodule Lambda do
     end
 
     def replace1(x,{:^,a,y},z) do
-      {:^,a,replace(x,y,z)}
+      {a,replace(x,y,z)}
     end
 end
