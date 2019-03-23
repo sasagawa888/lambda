@@ -17,7 +17,7 @@ defmodule Lambda do
       try do
           #:io.write(read())
           #print(read())
-          print(beta(combinator(read())))
+          print(reduce(combinator(read())))
           repl()
       catch
         x -> IO.write(x)
@@ -111,33 +111,22 @@ defmodule Lambda do
       throw "syntax error1"
     end
 
-
-    def print(x) when is_list(x) and length(x) >=2 do
-      print1(x)
-    end
-    def print([]) do end
     def print(x) when is_atom(x) do
       IO.write(x)
     end
-    def print({:^,x,y}) do
+    def print({x,y}) do
       IO.write("^")
       IO.write(x)
       IO.write(".")
-      print1(y)
+      print(y)
     end
-    def print([{:^,x,y}]) do
-      IO.write("^")
-      IO.write(x)
-      IO.write(".")
-      print1(y)
-    end
-    def print([x|xs]) do
+    def print([x,y]) do
       #IO.inspect binding()
       print(x)
-      print(xs)
+      print1(y)
     end
 
-    def print1({:^,x,y}) do
+    def print1({x,y}) do
       #IO.inspect binding()
       IO.write("(^")
       IO.write(x)
@@ -145,15 +134,11 @@ defmodule Lambda do
       print1(y)
       IO.write(")")
     end
-    def print1([x,y]) when is_atom(x) and is_atom(y) do
+    def print1([x,y]) do
       IO.write("(")
-      IO.write(x)
-      IO.write(y)
+      print(x)
+      print1(y)
       IO.write(")")
-    end
-    def print1([l|ls]) do
-      print1(l)
-      print1(ls)
     end
     def print1(e) do
       #IO.inspect binding()
@@ -175,54 +160,33 @@ defmodule Lambda do
     end
     def combinator(x) do x end
 
-    def beta(:end) do throw "end" end
-    def beta(x) when is_atom(x) do x end
-    def beta([x,y]) when is_atom(x) do [x,y] end
-    def beta({a,body}) do
-      exp = beta(body)
-      :io.write(:asdf)
-      :io.write(exp)
+    def reduce(:end) do throw "end" end
+    def reduce(x) when is_atom(x) do x end
+    def reduce([x,y]) when is_atom(x) do [x,y] end
+    def reduce([x,y]) when is_tuple(x) do
+      reduce(beta(x,y))
+    end
+    def reduce({a,body}) do
+      exp = reduce(body)
       {a,exp}
     end
-    def beta([x,y]) do
-      #:io.write([x,y])
-      print([x,y])
-      IO.write('\n')
-      if is_lambda(x) do
-        beta1(x,y)
-      else
-        exp = beta(x)
-        if is_lambda(exp) do
-          beta([exp,y])
-        else
-          [exp,y]
-        end
-      end
-    end
 
-    def beta1({arg,body},y) do
+    def beta({arg,body},y) do
     #IO.inspect binding()
-      exp = beta(replace(arg,body,y))
-      exp
+      reduce(replace(arg,body,y))
     end
 
-    def replace(_,[],_) do [] end
-    def replace(x,[x|ys],z) do
+    def replace(x,x,z) do z end
+    def replace(x,[x,ys],z) do
       [z] ++ replace(x,ys,z)
     end
-    def replace(x,[y|ys],z) when is_atom(y) do
+    def replace(x,[y,ys],z) when is_atom(y) do
       [y] ++ replace(x,ys,z)
     end
-    def replace(x,[y|ys],z) do
+    def replace(_,[y,ys],_) do
       #IO.inspect binding()
-      if(is_lambda(y)) do
-        [replace1(x,y,z)] ++ replace(x,ys,z)
-      else
-        [replace(x,y,z)] ++ replace(x,ys,z)
-      end
+      reduce([y,ys])
     end
+    def replace(_,y,_) do y end
 
-    def replace1(x,{:^,a,y},z) do
-      {a,replace(x,y,z)}
-    end
 end

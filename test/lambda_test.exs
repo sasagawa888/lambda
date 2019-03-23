@@ -3,9 +3,9 @@ defmodule LambdaTest do
   doctest Lambda
 
   test "reduce test" do
-    #assert Lambda.reduce([:y]) == [:y]
-    #assert Lambda.reduce([:x, :y]) == [:x,:y]
-    #assert Lambda.reduce([{:^,:x,[:x]}, :y]) == [:y]
+    assert Lambda.reduce(:y) == :y
+    assert Lambda.reduce([:x, :y]) == [:x,:y]
+    assert Lambda.reduce([{:x,:x}, :y]) == :y
   end
   test "parse test" do
     assert Lambda.parse('xy\n',[]) == [:x, :y]
