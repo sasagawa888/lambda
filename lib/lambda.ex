@@ -1,6 +1,6 @@
 defmodule Lambda do
   @moduledoc """
-  Thsi code is Lambda interpreter
+  This code is Lambda interpreter
   """
 
   @doc """
@@ -103,6 +103,10 @@ defmodule Lambda do
     def parse1([41|ls],res) do
       #IO.inspect binding()
       {res,[41|ls]}
+    end
+    #space skip
+    def parse1([32|ls],res) do
+      parse1(ls,res)
     end
     def parse1('\n',res) do
       #IO.inspect binding()
