@@ -166,10 +166,23 @@ defmodule Lambda do
     def reduce([x,y]) when is_tuple(x) do
       reduce(beta(x,y))
     end
+
+    def reduce([x,y]) when is_list(x) do
+      if cant_reduce(x) do
+        [x,y]
+      else
+        reduce([reduce(x),y])
+      end
+    end
+
     def reduce({a,body}) do
       exp = reduce(body)
       {a,exp}
     end
+
+    def cant_reduce(x) when is_atom(x) do true end
+    def cant_reduce([x,_]) when is_atom(x) do true end
+    def cant_reduce(_) do false end
 
     def beta({arg,body},y) do
     #IO.inspect binding()
@@ -178,10 +191,13 @@ defmodule Lambda do
 
     def replace(x,x,z) do z end
     def replace(x,[x,ys],z) do
-      [z] ++ replace(x,ys,z)
+      [z,replace(x,ys,z)]
     end
     def replace(x,[y,ys],z) when is_atom(y) do
-      [y] ++ replace(x,ys,z)
+      [y,replace(x,ys,z)]
+    end
+    def replace(x,[y,ys],z) when is_list(y) do
+      [replace(x,y,z),replace(x,ys,z)]
     end
     def replace(_,[y,ys],_) do
       reduce([y,ys])
