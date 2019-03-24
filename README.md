@@ -16,10 +16,10 @@ Input the atom [end] and exit repl.
 Examples of running
 iex -S mix
 iex(1)> Lambda.repl()
-? (^y.y((^z.xz)(^z.z)))(^a.a)
+(^y.y((^z.xz)(^z.z)))(^a.a)
 x(^z.z)
-? SKKa
+SKKa
 a
-? end
+end
 endnil
 iex(2)>
