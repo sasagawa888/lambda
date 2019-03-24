@@ -7,6 +7,8 @@ defmodule LambdaTest do
     assert Lambda.test('Iy\n') == :y
     assert Lambda.test('Is\n') == :s
     assert Lambda.test('Ks\n') == {:y,:s}
+    assert Lambda.test('SKKa\n') == :a
+    assert Lambda.test('(^y.y((^z.xz)(^z.z)))(^a.a)\n') == [:x,{:z,:z}]
   end
 
   test "reduce test" do

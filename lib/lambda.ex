@@ -1,22 +1,20 @@
 defmodule Lambda do
   @moduledoc """
-  Documentation for Lambda.
+  Thsi code is Lambda interpreter
   """
 
   @doc """
-  Hello world.
+  Invoke interpreter
 
   ## Examples
 
-      #iex> Lambda.hello()
-      #:world
+      #iex> Lambda.repl()
+      #for halt >end
 
   """
 
     def repl() do
       try do
-          #:io.write(read())
-          #print(read())
           print(reduce(combinator(read())))
           repl()
       catch
@@ -33,7 +31,7 @@ defmodule Lambda do
 
     # for test
     def test(x) do
-      reduce(combinator(parse(x,[])))
+      parse(x,[]) |> combinator |> reduce
     end
 
     # terminal
