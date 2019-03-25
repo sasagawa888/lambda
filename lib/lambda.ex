@@ -126,7 +126,7 @@ defmodule Lambda do
       IO.write("^")
       IO.write(x)
       IO.write(".")
-      print(y)
+      print1(y)
     end
     def print([x,y]) do
       #IO.inspect binding()
@@ -153,13 +153,17 @@ defmodule Lambda do
       IO.write(e)
     end
 
+    def newline() do
+      IO.write('\n')
+    end
+
     def is_lambda({_,_}) do true end
     def is_lambda(_) do false end
 
     def combinator(:I) do {:x, :x} end
     def combinator(:K) do {:x,{:y,:x}} end
     def combinator(:S) do {:x,{:y,{:z,[[:x,:z],[:y,:z]]}}} end
-    def combinator(:Y) do {:f,[{:x, [:f,[:x,:x]]},{:x,[:f,[:x,:x]]}]} end
+    def combinator(:Y) do {:y,[{:x, [:y,[:x,:x]]},{:x,[:y,[:x,:x]]}]} end
     def combinator([x,y]) do
       [combinator(x)]++[combinator(y)]
     end
@@ -169,10 +173,14 @@ defmodule Lambda do
     def reduce(x) when is_atom(x) do x end
     def reduce([x,y]) when is_atom(x) do [x,y] end
     def reduce([x,y]) when is_tuple(x) do
+      print([x,y])
+      newline()
       reduce(beta(x,y))
     end
 
     def reduce([x,y]) when is_list(x) do
+      print([x,y])
+      newline()
       if cant_reduce(x) do
         [x,y]
       else
@@ -181,6 +189,8 @@ defmodule Lambda do
     end
 
     def reduce({a,body}) do
+      print({a,body})
+      newline()
       exp = reduce(body)
       {a,exp}
     end
