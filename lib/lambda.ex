@@ -15,7 +15,7 @@ defmodule Lambda do
 
     def repl() do
       try do
-          print(reduce(combinator(read())))
+          read() |> combinator |> reduce |> print 
           repl()
       catch
         x -> IO.write(x)
@@ -43,6 +43,7 @@ defmodule Lambda do
       {body,ls1} = parse1(ls,[])
       parse(ls1,{arg1,body})
     end
+    # e.g. ^xyz.z shorthand
     def parse([94,arg|ls],_) do
       arg1 = String.to_atom(<<arg>>)
       {arg1,parse([94|ls],[])}
@@ -72,13 +73,14 @@ defmodule Lambda do
       throw "syntax error"
     end
 
-
+    # e.g. ^x.y
     def parse1([94,arg,46|ls],res) do
       #IO.inspect binding()
       arg1 = String.to_atom(<<arg>>)
       {body,ls1} = parse1(ls,res)
       {{arg1,body},ls1}
     end
+    # e.g. ^xyz.z shorthand
     def parse1([94,arg|ls],_) do
       #IO.inspect binding()
       arg1 = String.to_atom(<<arg>>)

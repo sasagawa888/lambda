@@ -15,6 +15,7 @@ defmodule LambdaTest do
     assert Lambda.reduce(:y) == :y
     assert Lambda.reduce([:x, :y]) == [:x,:y]
     assert Lambda.reduce([{:x,:x}, :y]) == :y
+    assert Lambda.reduce([{:x,:a}, :y]) == :a
   end
   test "parse test" do
     assert Lambda.parse('xy\n',[]) == [:x, :y]
@@ -25,6 +26,7 @@ defmodule LambdaTest do
     assert Lambda.parse('^x.xy\n',[]) == {:x,[:x,:y]}
     assert Lambda.parse('^xy.z\n',[]) == {:x,{:y,:z}}
     assert Lambda.parse('^xyz.z\n',[]) == {:x,{:y,{:z,:z}}}
+    assert Lambda.parse('^x.(^y.(^z.z))\n',[]) == {:x,{:y,{:z,:z}}}
     assert Lambda.parse('xyz\n',[]) == [[:x,:y],:z]
     assert Lambda.parse('abcd\n',[]) == [[[:a,:b],:c],:d]
     assert Lambda.parse('(^x.y)\n',[]) == {:x,:y}
