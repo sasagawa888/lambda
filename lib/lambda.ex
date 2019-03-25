@@ -15,7 +15,7 @@ defmodule Lambda do
 
     def repl() do
       try do
-          read() |> combinator |> reduce |> print 
+          read() |> combinator |> reduce |> print
           repl()
       catch
         x -> IO.write(x)
@@ -159,6 +159,7 @@ defmodule Lambda do
     def combinator(:I) do {:x, :x} end
     def combinator(:K) do {:x,{:y,:x}} end
     def combinator(:S) do {:x,{:y,{:z,[[:x,:z],[:y,:z]]}}} end
+    def combinator(:Y) do {:f,[{:x, [:f,[:x,:x]]},{:x,[:f,[:x,:x]]}]} end
     def combinator([x,y]) do
       [combinator(x)]++[combinator(y)]
     end
