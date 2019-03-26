@@ -130,7 +130,7 @@ defmodule Lambda do
     end
     def print([x,y]) do
       #IO.inspect binding()
-      print(x)
+      print1(x)
       print1(y)
     end
 
@@ -208,10 +208,16 @@ defmodule Lambda do
     def replace(x,[x,ys],z) do
       [z,replace(x,ys,z)]
     end
+    def replace(x,[x,ys],z) when is_atom(x) do
+      [x,replace(x,ys,z)]
+    end
     def replace(x,[y,ys],z) when is_atom(y) do
       [y,replace(x,ys,z)]
     end
     def replace(x,[y,ys],z) when is_list(y) do
+      [replace(x,y,z),replace(x,ys,z)]
+    end
+    def replace(x,[y,ys],z) when is_tuple(y) do
       [replace(x,y,z),replace(x,ys,z)]
     end
     def replace(_,[y,ys],_) do
