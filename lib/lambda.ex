@@ -122,6 +122,13 @@ defmodule Lambda do
     def print(x) when is_atom(x) do
       IO.write(x)
     end
+    def print([x,y]) when is_tuple(x) and is_tuple(y) do
+      #IO.inspect binding()
+      IO.write("(")
+      print1(x)
+      print1(y)
+      IO.write(")")
+    end
     def print({x,y}) do
       IO.write("^")
       IO.write(x)
@@ -130,8 +137,11 @@ defmodule Lambda do
     end
     def print([x,y]) do
       #IO.inspect binding()
-      print1(x)
+      print(x)
       print1(y)
+    end
+    def print(e) do
+      IO.write(e)
     end
 
     def print1({x,y}) do
@@ -139,6 +149,13 @@ defmodule Lambda do
       IO.write("(^")
       IO.write(x)
       IO.write(".")
+      print1(y)
+      IO.write(")")
+    end
+    def print1([x,y]) when is_tuple(x) and is_tuple(y) do
+      #IO.inspect binding()
+      IO.write("(")
+      print1(x)
       print1(y)
       IO.write(")")
     end
