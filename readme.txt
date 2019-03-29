@@ -5,7 +5,7 @@ Usage:
  Lambda.repl
 
 λ is substituted with the ^ symbol.
-For example λx.x-> ^ x.x
+For example λx.x-> ^x.x
 The outermost λ expression can omit the parentheses.
 
 Shorthand
