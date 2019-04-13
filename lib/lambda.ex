@@ -12,6 +12,11 @@ defmodule Lambda do
       #for halt >end
 
   """
+    def lambda() do
+      IO.puts("Lambda calculus interpreter")
+      IO.puts("To quit enter 'end'")
+      repl()
+    end
 
     def repl() do
       try do
